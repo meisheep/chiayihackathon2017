@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>嘉義 e-bike 資料視覺化</title>
+  </head>
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.css"/>
+  <style>
+    #map {
+      position: absolute;
+      top: 0;
+      bottom: 25%;
+      right: 0;
+      left: 0;
+    }
+
+    #calc {
+      position: absolute;
+      top: 75%;
+      bottom: 0;
+      right: 0;
+      left: 0;
+      font-size: 20px;
+    }
+
+    #calc input {
+      border: 0;
+      border-bottom: 1px solid black;
+      font-size: 28px;
+      width: 2em;
+      text-align: center;
+    }
+
+    .w75 {
+      width: 75%;
+      height: 100%;
+      position: relative;
+      display: inline-block;
+      float: left;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .w25 {
+      width: 25%;
+      height: 100%;
+      position: relative;
+      display: inline-block;
+      float: left;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+  </style>
+  <body>
+  <div id="map"></div>
+  <div id="calc">
+    <div class="w25">
+      <input type="text" id="userInput" name="userInput" value="10"> km
+    </div>
+    <div class="w75">
+      <canvas id="costChart" height="50"></canvas>
+    </div>
+  </div>
+
+  </div>
+
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.4/Chart.bundle.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet-src.js"></script>
+
+  <script src="src/index.js"></script>
+  <script type="text/javascript">
+    $('#userInput').bind('change', () => {
+      const km = parseFloat($('#userInput').val());
+
+      const scooterCost = km * 2.71;
+      const ebikeCost = (km - 2.4) < 0 ? 15 : 15 + (km - 2.4) / 40 * 60 * 1.5;
+
+      const costCtx = $("#costChart");
+      const costChart = new Chart(costCtx, {
+        type: 'horizontalBar',
+        data: {
+          labels: ['機車', '電動機車'],
+          datasets: [{
+            label: '交通成本（元）',
+            data: [scooterCost, ebikeCost],
+            backgroundColor: [
+              'rgba(255, 99, 132, 0.2)',
+              'rgba(54, 162, 235, 0.2)',
+            ],
+            borderColor: [
+              'rgba(255,99,132,1)',
+              'rgba(54, 162, 235, 1)',
+            ],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          scales: {
+            xAxes: [{
+              ticks: {
+                beginAtZero:true
+              }
+            }]
+          }
+        }
+      });
+    });
+
+    {
+      $('#userInput').change();
+    }
+  </script>
+  </body>
+</html>
